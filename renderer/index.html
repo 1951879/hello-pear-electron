@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Hello Pear</title>
+    <title>Pear Voice Chat</title>
     <style>
       body {
         font-family:
@@ -12,14 +12,13 @@
         align-items: center;
         height: 100vh;
         margin: 0;
-        background: linear-gradient(135deg, #21c437 0%, #0e4f15 100%);
+        background: #10151c;
         color: white;
       }
       h1 {
-        font-size: 48px;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        font-size: 40px;
       }
-      #update-btn {
+      button {
         display: none;
         margin-top: 20px;
         padding: 12px 24px;
@@ -30,17 +29,33 @@
         color: white;
         cursor: pointer;
       }
-      #update-btn:hover {
-        background: greenyellow;
+      button:hover {
+        background: #4a90e2;
       }
       .container {
-        text-align: center;
+        width: min(680px, 90vw);
+      }
+      .status {
+        padding: 16px;
+        border: 1px solid #344150;
+        border-radius: 8px;
+        background: #19212b;
+      }
+      pre {
+        min-height: 120px;
+        white-space: pre-wrap;
+        color: #b9c7d8;
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1 id="v">v</h1>
+      <h1>Pear Voice Chat</h1>
+      <p>Linux implementation scaffold</p>
+      <div class="status">
+        <strong id="status">Starting worker...</strong>
+        <pre id="log"></pre>
+      </div>
       <button id="update-btn">Apply update</button>
     </div>
     <script type="module" src="app.js"></script>

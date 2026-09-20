@@ -1,10 +1,16 @@
 const bridge = window.bridge
 const decoder = new TextDecoder('utf-8')
+const status = document.getElementById('status')
+const log = document.getElementById('log')
 
-document.getElementById('v').innerText += bridge.pkg().version
+function writeLog(message) {
+  log.textContent += message + '\n'
+}
+
+status.innerText = `Scaffold ready (${bridge.pkg().version})`
 
 function showUpdateReady() {
-  document.getElementById('v').innerText = 'Update ready!'
+  status.innerText = 'Update ready'
   const btn = document.getElementById('update-btn')
   btn.style.display = 'inline-block'
   btn.onclick = async () => {
@@ -14,7 +20,7 @@ function showUpdateReady() {
       await bridge.applyUpdate()
       await bridge.appAfterUpdate()
     } catch (err) {
-      document.getElementById('v').innerText = 'Update failed: ' + err.message
+      status.innerText = 'Update failed: ' + err.message
       btn.style.display = 'none'
     }
   }
@@ -22,7 +28,7 @@ function showUpdateReady() {
 
 function onWorkerUpdaterEvent(name) {
   if (name === 'updating') {
-    document.getElementById('v').innerText = 'UPDATING...'
+    status.innerText = 'Updating...'
     return
   }
   if (name === 'updated') showUpdateReady()
@@ -36,16 +42,16 @@ bridge.startWorker(workers.main)
 let sentHello = false
 
 const offWorkerStdout = bridge.onWorkerStdout(workers.main, (data) => {
-  console.log('worker stdout', '[', workers.main, ']:', decoder.decode(data))
+  writeLog('stdout: ' + decoder.decode(data).trim())
 })
 
 const offWorkerStderr = bridge.onWorkerStderr(workers.main, (data) => {
-  console.error('worker stderr', '[', workers.main, ']:', decoder.decode(data))
+  writeLog('stderr: ' + decoder.decode(data).trim())
 })
 
 const offWorkerIpc = bridge.onWorkerIPC(workers.main, (data) => {
   const message = decoder.decode(data)
-  console.log('worker ipc', '[', workers.main, ']:', message)
+  writeLog('ipc: ' + message)
   onWorkerUpdaterEvent(message)
 
   if (!sentHello) {
@@ -55,7 +61,7 @@ const offWorkerIpc = bridge.onWorkerIPC(workers.main, (data) => {
 })
 
 const offWorkerExit = bridge.onWorkerExit(workers.main, (code) => {
-  console.log('Worker exited with code', code)
+  status.innerText = `Worker exited (${code})`
   offWorkerStdout()
   offWorkerStderr()
   offWorkerIpc()
